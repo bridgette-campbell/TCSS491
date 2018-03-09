@@ -105,7 +105,7 @@ AM.queueDownload("./img/white_mage.png");
 AM.queueDownload("./img/background.png");
 
 AM.downloadAll(function () {
-    var canvas = document.getElementById("gameWorld");
+    var canvas = document.getElementById("assignment3");
     var ctx = canvas.getContext("2d");
 
     var gameEngine = new GameEngine();
