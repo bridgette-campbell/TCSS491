@@ -100,9 +100,9 @@ WhiteMage.prototype.update = function () {
 
 
 
-AM.queueDownload("./img/black_mage.png");
-AM.queueDownload("./img/white_mage.png");
-AM.queueDownload("./img/background.png");
+AM.queueDownload("../img/black_mage.png");
+AM.queueDownload("../img/white_mage.png");
+AM.queueDownload("../img/background.png");
 
 AM.downloadAll(function () {
     var canvas = document.getElementById("assignment1");
@@ -112,9 +112,9 @@ AM.downloadAll(function () {
     gameEngine.init(ctx);
     gameEngine.start();
 
-    gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/background.png")));
-    gameEngine.addEntity(new BlackMage(gameEngine, AM.getAsset("./img/black_mage.png")));
-    gameEngine.addEntity(new WhiteMage(gameEngine, AM.getAsset("./img/white_mage.png")));
+    gameEngine.addEntity(new Background(gameEngine, AM.getAsset("../img/background.png")));
+    gameEngine.addEntity(new BlackMage(gameEngine, AM.getAsset("../img/black_mage.png")));
+    gameEngine.addEntity(new WhiteMage(gameEngine, AM.getAsset("../img/white_mage.png")));
 	
 	
 
