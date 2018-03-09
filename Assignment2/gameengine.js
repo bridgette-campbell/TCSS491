@@ -37,6 +37,8 @@ function GameEngine() {
     this.wheel = null;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
+	this.out = 0;
+	this.over = false;
 }
 
 GameEngine.prototype.init = function (ctx) {
@@ -109,6 +111,9 @@ GameEngine.prototype.draw = function () {
 }
 
 GameEngine.prototype.update = function () {
+	if (this.over) {
+		this.endGame();
+	}
     var entitiesCount = this.entities.length;
 
     for (var i = 0; i < entitiesCount; i++) {
@@ -124,6 +129,11 @@ GameEngine.prototype.update = function () {
             this.entities.splice(i, 1);
         }
     }
+}
+
+GameEngine.prototype.endGame = function () {
+    this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+	
 }
 
 GameEngine.prototype.loop = function () {
