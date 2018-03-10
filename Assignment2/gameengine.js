@@ -51,12 +51,12 @@ GameEngine.prototype.init = function (ctx) {
 }
 
 GameEngine.prototype.start = function () {
-    console.log("starting game");
-    var that = this;
-    (function gameLoop() {
-        that.loop();
-        requestAnimFrame(gameLoop, that.ctx.canvas);
-    })();
+	console.log("starting game");
+	var that = this;
+	(function gameLoop() {
+		that.loop();
+		requestAnimFrame(gameLoop, that.ctx.canvas);
+	})();
 }
 
 GameEngine.prototype.startInput = function () {
@@ -111,29 +111,21 @@ GameEngine.prototype.draw = function () {
 }
 
 GameEngine.prototype.update = function () {
-	if (this.over) {
-		this.endGame();
+	var entitiesCount = this.entities.length;
+
+	for (var i = 0; i < entitiesCount; i++) {
+		var entity = this.entities[i];
+
+		if (!entity.removeFromWorld) {
+			entity.update();
+		}
 	}
-    var entitiesCount = this.entities.length;
 
-    for (var i = 0; i < entitiesCount; i++) {
-        var entity = this.entities[i];
-
-        if (!entity.removeFromWorld) {
-            entity.update();
-        }
-    }
-
-    for (var i = this.entities.length - 1; i >= 0; --i) {
-        if (this.entities[i].removeFromWorld) {
-            this.entities.splice(i, 1);
-        }
-    }
-}
-
-GameEngine.prototype.endGame = function () {
-    this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-	
+	for (var i = this.entities.length - 1; i >= 0; --i) {
+		if (this.entities[i].removeFromWorld) {
+			this.entities.splice(i, 1);
+		}
+	}
 }
 
 GameEngine.prototype.loop = function () {

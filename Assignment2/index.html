@@ -10,12 +10,15 @@
 </head>
 <body>
 	<p><a href="../index.html">Back to all assignments</a> <br/>
-		The objective is for the violet ball to tag each non-violet ball until there are no more left. <br/>
+		The objective is for the violet ball to tag each non-chaser ball until there are no more left. <br/>
 		A non-chaser ball can be purple, white, or blue. <br/>
 		When a purple ball is hit it becomes white. When a white ball is hit it becomes blue. When a blue ball is hit, it is out. <br/>
-		When a ball is out, it increments the Out counter and removes the ball from the field. <br/>
-		When the number of Out balls reaches the number of non-chaser balls, the simulation is over.</p>
-	<div id="out">0 out</div>
+		When a ball is out, it increments the caught counter and removes the ball from the field. <br/>
+		Before it is removed, it has a chance to spawn two more balls.<br/>
+		When the number of caught balls reaches the total number of non-chaser balls, the simulation is over. <br/>
+		The green ball(s) give a velocity boost to any ball they come in contact with, chaser or not. <br/>
+		They are not part of the chaser ball's objective.</p>
+	<div id="out"></div>
     <canvas id="assignment2" tabindex="1" width="765" height="468" ></canvas>
 </body>
 </html>
