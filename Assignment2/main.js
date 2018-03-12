@@ -1,8 +1,9 @@
 var AM = new AssetManager();
+var GAME;
 var OUT = 0;
 var MAX_SPAWNED = 30;
 
-function Background(game, spritesheet) {
+function Background(spritesheet) {
     this.x = 0;
     this.y = 0;
 	this.sx = 510;
@@ -10,8 +11,7 @@ function Background(game, spritesheet) {
 	this.w = 255;
 	this.h = 156;
     this.spritesheet = spritesheet;
-    this.game = game;
-    this.ctx = game.ctx;
+    this.ctx = GAME.ctx;
 };
 
 Background.prototype.draw = function () {
@@ -22,6 +22,13 @@ Background.prototype.update = function () {
 	//stationary
 };
 
+function counters() {
+	if (OUT !== MAX_SPAWNED) {
+		GAME.out.innerHTML = OUT + "/" + MAX_SPAWNED + " caught";
+	} else {
+		GAME.out.innerHTML = OUT + "/" + MAX_SPAWNED + " caught. Simulation over. Refresh to begin again!";
+	}
+}
 
 // GameBoard code below modified from Chris Marriott's code.
 
@@ -31,18 +38,17 @@ function distance(a, b) {
     return Math.sqrt(dx * dx + dy * dy);
 }
 
-function Circle(game) {
+function Circle() {
     this.player = 1;
     this.radius = 7;
     this.visualRadius = 300;
-	this.game = game;
     this.colors = ["Violet", "Blue", "Purple", "White", "Green"];
     this.it = false;
 	this.booster = false;
 	this.boosted = false;
 	this.boostedTime = 0;
 	this.color = 2; //Math.floor(Math.random() * (3 - 1 + 1)) + 1; //randomly choose color that isn't violet
-    Entity.call(this, this.game, this.radius + Math.random() * (this.game.surfaceWidth - this.radius * 2), this.radius + Math.random() * (this.game.surfaceHeight - this.radius * 2));
+    Entity.call(this, this.radius + Math.random() * (GAME.surfaceWidth - this.radius * 2), this.radius + Math.random() * (GAME.surfaceHeight - this.radius * 2));
 
     this.velocity = { x: Math.random() * 1000, y: Math.random() * 1000 };
     var speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
@@ -81,16 +87,12 @@ Circle.prototype.blueCaught = function () {
 	var rand = Math.floor(Math.random() * (3 - 1 + 1)) + 1; //random number [1, 3]
 	if (rand === 1) {
 		for (var i = 0; i < 2; i++) {
-			circle = new Circle(this.game);
-			this.game.addEntity(circle);
+			circle = new Circle();
+			GAME.addEntity(circle);
 			MAX_SPAWNED++;
 		}
 	}
-	if (OUT !== MAX_SPAWNED) {
-		this.game.out.innerHTML = OUT + "/" + MAX_SPAWNED + " caught";
-	} else {
-		this.game.out.innerHTML = OUT + "/" + MAX_SPAWNED + " caught. Simulation over. Refresh to begin again!";
-	}
+	counters();
 	this.removeFromWorld = true;	//delete this circle because it's out
 };
 
@@ -103,7 +105,7 @@ Circle.prototype.collideLeft = function () {
 };
 
 Circle.prototype.collideRight = function () {
-    return (this.x + this.radius) > this.game.surfaceWidth;
+    return (this.x + this.radius) > GAME.surfaceWidth;
 };
 
 Circle.prototype.collideTop = function () {
@@ -111,16 +113,16 @@ Circle.prototype.collideTop = function () {
 };
 
 Circle.prototype.collideBottom = function () {
-    return (this.y + this.radius) > this.game.surfaceHeight;
+    return (this.y + this.radius) > GAME.surfaceHeight;
 };
 
 Circle.prototype.update = function () {
 	if (OUT === MAX_SPAWNED) {
-		this.game.over = true;
+		GAME.over = true;
 	}
 	
 	if(this.boosted){
-		this.boostedTime += this.game.clockTick;
+		this.boostedTime += GAME.clockTick;
 		if(this.boostedTime > 1){
 			this.boosted = false;
 		}
@@ -131,32 +133,32 @@ Circle.prototype.update = function () {
 	 //  console.log(this.velocity);
 	 
 		if(this.boosted){
-			this.x += this.velocity.x * this.game.clockTick * 2;
-			this.y += this.velocity.y * this.game.clockTick * 2;
+			this.x += this.velocity.x * GAME.clockTick * 2;
+			this.y += this.velocity.y * GAME.clockTick * 2;
 		} else {
-			this.x += this.velocity.x * this.game.clockTick;
-			this.y += this.velocity.y * this.game.clockTick;
+			this.x += this.velocity.x * GAME.clockTick;
+			this.y += this.velocity.y * GAME.clockTick;
 		}
 
 
 		if (this.collideLeft() || this.collideRight()) {
 			this.velocity.x = -this.velocity.x * friction;
 			if (this.collideLeft()) this.x = this.radius + 1;
-			if (this.collideRight()) this.x = this.game.surfaceWidth - this.radius - 1;
-			this.x += this.velocity.x * this.game.clockTick;
-			this.y += this.velocity.y * this.game.clockTick;
+			if (this.collideRight()) this.x = GAME.surfaceWidth - this.radius - 1;
+			this.x += this.velocity.x * GAME.clockTick;
+			this.y += this.velocity.y * GAME.clockTick;
 		}
 
 		if (this.collideTop() || this.collideBottom()) {
 			this.velocity.y = -this.velocity.y * friction;
 			if (this.collideTop()) this.y = this.radius + 1;
-			if (this.collideBottom()) this.y = this.game.surfaceHeight - this.radius - 1;
-			this.x += this.velocity.x * this.game.clockTick;
-			this.y += this.velocity.y * this.game.clockTick;
+			if (this.collideBottom()) this.y = GAME.surfaceHeight - this.radius - 1;
+			this.x += this.velocity.x * GAME.clockTick;
+			this.y += this.velocity.y * GAME.clockTick;
 		}
 
-		for (var i = 0; i < this.game.entities.length; i++) {
-			var ent = this.game.entities[i];
+		for (var i = 0; i < GAME.entities.length; i++) {
+			var ent = GAME.entities[i];
 			if (ent !== this && this.collide(ent)) {
 				var temp = { x: this.velocity.x, y: this.velocity.y };
 
@@ -174,10 +176,10 @@ Circle.prototype.update = function () {
 				this.velocity.y = ent.velocity.y * friction;
 				ent.velocity.x = temp.x * friction;
 				ent.velocity.y = temp.y * friction;
-				this.x += this.velocity.x * this.game.clockTick;
-				this.y += this.velocity.y * this.game.clockTick;
-				ent.x += ent.velocity.x * this.game.clockTick;
-				ent.y += ent.velocity.y * this.game.clockTick;
+				this.x += this.velocity.x * GAME.clockTick;
+				this.y += this.velocity.y * GAME.clockTick;
+				ent.x += ent.velocity.x * GAME.clockTick;
+				ent.y += ent.velocity.y * GAME.clockTick;
 				
 				if(ent.booster){
 					this.boosted = true;
@@ -231,8 +233,8 @@ Circle.prototype.update = function () {
 				}
 			}
 		}
-		this.velocity.x -= (1 - friction) * this.game.clockTick * this.velocity.x;
-		this.velocity.y -= (1 - friction) * this.game.clockTick * this.velocity.y;
+		this.velocity.x -= (1 - friction) * GAME.clockTick * this.velocity.x;
+		this.velocity.y -= (1 - friction) * GAME.clockTick * this.velocity.y;
 
 
 	//}
@@ -264,13 +266,14 @@ AM.downloadAll(function () {
     var ctx = canvas.getContext('2d');
 	var out = document.getElementById('out');
 
-    var gameEngine = new GameEngine();
+    GAME = new GameEngine();
+	var gameEngine = GAME;
     gameEngine.init(ctx);
 	gameEngine.out = out;
 	gameEngine.out.innerHTML = OUT + "/" + MAX_SPAWNED + " caught";
 	
-    gameEngine.addEntity(new Background(gameEngine, AM.getAsset("../img/tiled_background.png")));
-    var circle = new Circle(gameEngine);
+    gameEngine.background = new Background(AM.getAsset("../img/tiled_background.png"));
+    var circle = new Circle();
 	circle.setIt();
     circle.color = 0; //make this circle the chaser
     gameEngine.addEntity(circle);
@@ -278,7 +281,7 @@ AM.downloadAll(function () {
 	var rand = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
 	var boost = null; 
 	for (var i = 0; i < rand; i++) {
-		boost = new Circle(gameEngine);
+		boost = new Circle();
 		boost.booster = true;
 		boost.radius = 15;
 		boost.color = 4; //make this circle the booster
@@ -286,9 +289,105 @@ AM.downloadAll(function () {
 	}
 
     for (var i = 0; i < MAX_SPAWNED; i++) {
-        circle = new Circle(gameEngine);
+        circle = new Circle();
         gameEngine.addEntity(circle);
     };
 
     gameEngine.start();
 });
+
+//Assignment 3 code starts here.
+var socket = io.connect("http://24.16.255.56:8888");
+
+window.onload = function () {
+    console.log("starting sockets");
+    var messages = [];
+    var username = "Bridgette Campbell";
+    var content = document.getElementById("assignment2");
+
+    socket.on("ping", function (ping) {
+        console.log(ping);
+        socket.emit("pong");
+    });
+	
+	socket.on("load", function (data) {
+		GAME.entities = [];
+		OUT = 0;
+		MAX_SPAWNED = 0;
+		console.log(data.data);
+		var entitiesCount = data.data.circles.length;
+		for (var i = 0; i < entitiesCount; i++) {
+			dataCircle = data.data.circles[i];
+			var entity = new Circle();
+			entity.x = dataCircle.x;
+			entity.y = dataCircle.y;
+			entity.removeFromWorld = dataCircle.removeFromWorld;
+			entity.player = dataCircle.player;
+			entity.radius = dataCircle.radius;
+			entity.visualRadius = dataCircle.visualRadius;
+			entity.colors = dataCircle.colors;
+			entity.it = dataCircle.it;
+			entity.booster = dataCircle.booster;
+			entity.boosted = dataCircle.boosted;
+			entity.boostedTime = dataCircle.boostedTime;
+			entity.color = dataCircle.color;
+			entity.velocity = dataCircle.velocity;
+			
+			GAME.entities[i] = entity;
+		}
+		OUT = data.data.caught;
+		MAX_SPAWNED = data.data.max;
+		counters();
+		GAME.loop();
+	});
+	
+    socket.on("sync", function (data) {
+        messages = data;
+        var html = '';
+        for (var i = 0; i < messages.length; i++) {
+            html += '<b>' + (messages[i].username ? messages[i].username : "Server") + ": </b>";
+            html += messages[i].message + "<br />";
+        }
+        content.innerHTML = html;
+        content.scrollTop = content.scrollHeight;
+        console.log("sync " + html);
+    });
+
+    socket.on("message", function (data) {
+        if (data.message) {
+            messages.push(data);
+            var html = '';
+            for (var i = 0; i < messages.length; i++) {
+                html += '<b>' + (messages[i].username ? messages[i].username : "Server") + ": </b>";
+                html += messages[i].message + "<br />";
+            }
+            content.innerHTML = html;
+            content.scrollTop = content.scrollHeight;
+        } else {
+            console.log("No message.");
+        }
+
+    });
+
+    window.onkeydown = function (e) {
+        if (e.keyCode === 83) { //s for save/send			
+			var send = {circles: GAME.entities, caught: OUT, max: MAX_SPAWNED};
+			console.log(send);
+			socket.emit("save", { studentname: "Bridgette Campbell", statename: "assignment2State", data: send });
+        } else if (e.keyCode === 82) { //r for read/reload
+			socket.emit("load", { studentname: "Bridgette Campbell", statename: "assignment2State" });
+		}
+    };
+
+    socket.on("connect", function () {
+        console.log("Socket connected.")
+    });
+    socket.on("disconnect", function () {
+        console.log("Socket disconnected.")
+    });
+    socket.on("reconnect", function () {
+        console.log("Socket reconnected.")
+    });
+
+};
+

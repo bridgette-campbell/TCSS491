@@ -3,7 +3,8 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Bridgette Campbell TCSS 491 Assignment 2</title>
+    <title>Bridgette Campbell TCSS 491 Assignment 2 & 3</title>
+    <script type="text/javascript" src="http://24.16.255.56:8888/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="../assetmanager.js"></script>
     <script type="text/javascript" src="./gameengine.js"></script>
     <script type="text/javascript" src="./main.js"></script>
@@ -17,7 +18,8 @@
 		Before it is removed, it has a chance to spawn two more balls.<br/>
 		When the number of caught balls reaches the total number of non-chaser balls, the simulation is over. <br/>
 		The green ball(s) give a velocity boost to any ball they come in contact with, chaser or not. <br/>
-		They are not part of the chaser ball's objective.</p>
+		They are not part of the chaser ball's objective. <br/>
+		Push "s" to save the simulation state and "r" to reload from the last saved simulation state.</p>
 	<div id="out"></div>
     <canvas id="assignment2" tabindex="1" width="765" height="468" ></canvas>
 </body>
